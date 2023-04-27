@@ -143,17 +143,27 @@ get_env(Key) ->
     get_env(Key, undefined).
 
 get_env(Key, Default) ->
-    case ets:lookup(?TABLE, ?KEY(Key)) of
-        [{__Key, Val}] -> Val;
-        [] -> Default
+    try
+      case ets:lookup(?TABLE, ?KEY(Key)) of
+          [{__Key, Val}] -> Val;
+          [] -> Default
+      end
+    catch
+        error:badarg ->
+            Default
     end.
 
 unset_env(Key) ->
     gen_server:call(?SERVER, {unset, ?KEY(Key)}).
 
 get_all_env(FilterTag) ->
-    All = ets:tab2list(?TABLE),
-    [{Key, V} || {{?BASETAG, {Tag, Key}}, V} <- All, Tag==FilterTag].
+    try
+      All = ets:tab2list(?TABLE),
+      [{Key, V} || {{?BASETAG, {Tag, Key}}, V} <- All, Tag==FilterTag]
+    catch
+        error:badarg ->
+            []
+    end.
 
 %% ProcDic Vars
 

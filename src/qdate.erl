@@ -161,8 +161,6 @@
 
 -define(DETERMINE_TZ, determine_timezone()).
 -define(DEFAULT_DISAMBIG, prefer_standard).
--define(else, true).
-
 
 start() ->
     application:ensure_all_started(qdate).
@@ -1085,7 +1083,7 @@ date_tz_to_tz_both(Date, FromTZ, ToTZ) ->
     if
         Standard=:=Daylight ->
             Standard;
-        ?else -> 
+        true -> 
             {ambiguous, Standard, Daylight}
     end.           
 
